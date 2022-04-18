@@ -1,32 +1,73 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <v-app>
+    <v-main v-if="$route.meta.plainLayout">
+      <router-view/>
+    </v-main>
+    <div v-if="!$route.meta.plainLayout"> 
+       <v-app-bar
+        app
+        color="white"
+        elevate-on-scroll
+        scroll-target="#scrolling-techniques-7"
+      >
+      <div class="d-flex align-center">
+        <v-img
+          alt="Wac Logo"
+          class="shrink mr-2"
+          contain
+          src="./assets/Logo2.png"
+          transition="scale-transition"
+          width="90"
+        />
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <router-link :to="{ name: 'Project' }">
+        <v-btn text>
+          <span class="mr-2">Project</span>
+        </v-btn>
+      </router-link>
+      <router-link :to="{ name: 'ArticleList' }">
+      <v-btn text>
+        <span class="mr-2">Articles</span>
+      </v-btn>
+      </router-link>
+      <router-link :to="{ name: 'Article' }">
+      <v-btn text>
+        <span class="mr-2">ADD Article</span>
+      </v-btn>
+      </router-link>
+      <v-btn icon v-on:click.prevent="logOut">
+        <v-icon>mdi-logout-variant</v-icon>
+      </v-btn>
+    </v-app-bar>
+      <router-view/>
     </div>
-    <router-view/>
-  </div>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
 
-#nav {
-  padding: 30px;
-}
+export default {
+  name: 'App',
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  data: () => ({
+    //
+  }),
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+   methods: {
+    logOut() {
+      this.$store.dispatch("auth_logout").then(() => {
+        this.$router.push("/");
+      });
+    },
+  },
+};
+</script>
+
+<style scoped>
+.router-link-exact-active {
+  background: #f4f4f4;
 }
 </style>
