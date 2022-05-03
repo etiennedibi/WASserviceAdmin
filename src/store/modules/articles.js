@@ -13,7 +13,6 @@ const getters = {
       let date = new Date(article[index].created_at);
       article[index].created_at = date.toLocaleDateString("fr", options)
     }
-    console.log(article);
     return article;
   },
 };

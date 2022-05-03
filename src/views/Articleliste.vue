@@ -28,32 +28,131 @@
           </v-row> -->
 
           <!-- PRODUCT DETAILS MODAL TEMPLATE FOR EACH PRODUCT -->
-          <v-dialog
-            v-model="dialog"
-            transition="dialog-bottom-transition"
-            width="1200"
-            overlay-color="black"
-            overlay-opacity="0.8"
-            mainGreenColor
-          >
-            <v-card tile>
-              <!-- <v-toolbar flat color="Importantcolor Importantcolor--text" >
-                        <v-btn icon dark @click="dialog = false">
-                          <v-icon class="Titlecolor--text">mdi-close</v-icon>
-                        </v-btn> 
-                        <v-toolbar-title>POUET</v-toolbar-title>
-                      </v-toolbar>             -->
-
+           <!-- SHOW DIALOG {{ selectedItem.fullname }}-->
+          <v-dialog v-model="dialog" max-width="700">
+            <v-card>
+              <v-card-title >
+                  {{ selectedItem.title }}
+                </v-card-title>
               <v-card-text>
                 <v-container>
-                  <v-row class="detailsTemplate">
-                    dkoieijrf
+                  <v-row>
+                    <v-col cols="12" class="infor">
+                      {{ selectedItem.content }}
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
+            
             </v-card>
           </v-dialog>
           <!-- END PRDUCT DETAILS MODAL TEMPLATE FOR EACH PRODUCT -->
+
+          <!-- EDIT TRAVEL DIALOG -->
+          <v-dialog v-model="dialogEdit" max-width="500">
+            <v-card>
+              <v-card-title >
+                  EDIT ARTICLE
+                </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <form class="updateForm">
+                    <v-container fluid>
+                      <v-row>
+                        <v-col cols="12" md="12" lg="12">
+                          <v-text-field
+                          clearable
+                          clear-icon="mdi-close-circle"
+                          label="Title"
+                          solo
+                          v-model="selectedItem.title"
+                        ></v-text-field>
+                        <v-textarea
+                          clearable
+                          v-model="selectedItem.concerning"
+                          clear-icon="mdi-close-circle"
+                          label="Subtitle"
+                          auto-grow
+                          solo
+                          rows="1"
+                          row-height="15"
+                        ></v-textarea>
+
+                         <v-textarea
+                          clearable
+                          v-model="selectedItem.content"
+                          clear-icon="mdi-close-circle"
+                        label="Text"
+                          auto-grow
+                          solo
+                          rows="10"
+                          row-height="15"
+                        ></v-textarea>
+                        </v-col>
+                        
+                      </v-row>
+                    </v-container>
+                  </form>
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="red"
+                  rounded
+                  depressed
+                  @click="closeEdit"
+                  style="color: white"
+                  >Annuler</v-btn
+                >
+                <v-btn
+                  color="green"
+                  rounded
+                  depressed
+                  @click="TheEdit"
+                  style="color: white"
+                  >Enregistrer</v-btn
+                >
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+
+           <!-- DELETE TRAVEL DIALOG -->
+        <v-dialog v-model="dialogDelete" max-width="420">
+          <v-card>
+            <v-card-title >
+              DELETE ARTICLE
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <div class="CancelVerification">
+                  voulez-vous vraiment supprimer <br />
+                  cet article ?
+                </div>
+                <div class="verificationAction">
+                  <v-btn
+                    color="success"
+                    rounded
+                    depressed
+                    @click="closeDelete"
+                    style="color: white"
+                    >Non</v-btn
+                  >
+                  <v-btn
+                    color="error"
+                    rounded
+                    depressed
+                    @click="deleteItemConfirm"
+                    style="color: white"
+                    >Oui</v-btn
+                  >
+                </div>
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
         </template>
 
         <template v-slot:default="props">
@@ -72,15 +171,13 @@
                   </div>
                   <div>
                     <p>
-                      {{item.title}} <br>
-                      <!-- <span style="text-transform: lowercase; line-height:10px;">{{item.concerning}}</span> -->
-                    </p>  
-                    <img src="file:///home/hico/Documents/Fabrice/WASserviceAPI/ArtIMG/cl1xljzl6000128cr2h7qgppx.png" alt="" srcset="">
+                      {{item.title}}
+                    </p> 
                   </div>
                   <div> 
                     <v-btn icon color="#3d3c3c96" @click="openDialog(item)"><v-icon small>mdi-eye</v-icon></v-btn> 
-                    <v-btn icon color="#3d3c3c96"><v-icon small>mdi-pencil</v-icon></v-btn>
-                    <v-btn icon color="#3d3c3c96"><v-icon small>mdi-delete</v-icon></v-btn> 
+                    <v-btn icon color="#3d3c3c96" @click="editItem(item)"><v-icon small>mdi-pencil</v-icon></v-btn>
+                    <v-btn icon color="#3d3c3c96" @click="deleteItem(item)"><v-icon small>mdi-delete</v-icon></v-btn> 
                   </div>
               </div>
             </v-col>
@@ -119,6 +216,30 @@
     
     <!--  END DATA TABLE -->
 
+  <transition name="slide">
+      <v-alert
+        v-if="addingSuccess"
+        elevation="13"
+        type="success"
+        max-width="300"
+        class="alert"
+        color="success"
+      >
+       {{ articleaEditResponse.message }}</v-alert
+      >
+    </transition>
+    <transition name="slide">
+      <v-alert
+        v-if="addingfalse"
+        elevation="13"
+        type="error"
+        max-width="300"
+        class="alert"
+        color="black"
+      >
+        {{ articleaEditResponse.message }}</v-alert
+      >
+    </transition>
 
 
   </div>
@@ -126,6 +247,7 @@
 
 <script>
   // import HelloWorld from '../components/HelloWorld'
+import axios from "axios";
 import { mapGetters } from "vuex"
 
   export default {
@@ -145,7 +267,7 @@ import { mapGetters } from "vuex"
     filter: {},
     sortDesc: false,
     page: 1,
-    itemsPerPage: 8,
+    itemsPerPage: 6,
     sortBy: "name",
     keys: ["id", "Name", "Quantity", "price"],
     items: [
@@ -253,6 +375,25 @@ import { mapGetters } from "vuex"
 
     ],
 
+
+    dialogEdit:false,
+    ArticleToEdit: {
+      title: "",
+      content: "",
+      concerning: "",
+      id:"",
+    },
+
+    // For travel deleted
+    dialogDelete: false,
+    articleToDelete: "",
+    articleDeleteResponse: "",
+
+
+    articleaEditResponse: "",
+    addingSuccess: false,
+    addingfalse: false,
+
     
   }),
 
@@ -260,7 +401,7 @@ import { mapGetters } from "vuex"
      ...mapGetters(["Articles"]),
 
     numberOfPages() {
-      return Math.ceil(this.items.length / this.itemsPerPage);
+      return Math.ceil(this.Articles.length / this.itemsPerPage);
     },
   },
 
@@ -282,11 +423,98 @@ import { mapGetters } from "vuex"
     openDialog(item) {
       this.selectedItem = Object.assign({}, item);
       this.$store.state.OneSTation = this.selectedItem.id;
-
       this.$store.state.forceRdeDeclared += 1;
-
       this.dialog = !this.dialog;
     },
+
+    editItem(item) {
+      console.log("popop");
+      this.selectedItem = Object.assign({}, item);
+      //  Open the Edit Dialogue
+      this.dialogEdit = true;
+    },
+
+    TheEdit() {
+      axios({ url: "article/update", data: this.selectedItem, method: "PUT" })
+        .then((response) => {
+          this.articleaEditResponse = response.data;
+          if (this.articleaEditResponse.message == "sucess") {
+            // Modification effectuée
+            this.articleaEditResponse.message = "modification effectuée";
+            this.addingSuccess = !this.addingSuccess;
+            setTimeout(() => {
+              this.addingSuccess = !this.addingSuccess;
+              // this.forceRerender();
+            }, 3000);
+          } else {
+            this.addingfalse = !this.addingfalse;
+            setTimeout(() => {
+              this.addingfalse = !this.addingfalse;
+            }, 3000);
+          } 
+        })
+        .catch((error) => {
+          this.articleaEditResponse = error.message;
+          console.error("There was an error!", error);
+        });
+
+      this.closeEdit();
+    },
+
+    closeEdit() {
+      this.dialogEdit = false;
+    },
+
+
+    // --------------------
+    // delete a travel
+    // --------------------
+    deleteItem(item) {
+      // this.editedIndex = this.Travels.indexOf(item);
+      this.selectedItem = Object.assign({}, item);
+      this.articleToDelete = { article_id: this.selectedItem.id };
+      this.dialogDelete = true;
+    },
+
+    deleteItemConfirm() {
+      console.log(this.articleToDelete);
+        axios({ url: "article/delete/" + this.articleToDelete.article_id,  method: "DELETE" })
+        .then((response) => {
+          this.articleaEditResponse = response.data;
+
+          if (this.articleaEditResponse.message == "success") {
+            // Annulation effectuée
+            this.articleaEditResponse.message = "Suppression effectuée";
+            this.addingSuccess = !this.addingSuccess;
+            setTimeout(() => {
+              this.addingSuccess = !this.addingSuccess;
+              this.forceRerender();
+            }, 3000);
+          } else {
+            this.articleaEditResponse.message =
+              "Impossible d'effectuer l'annulation";
+            this.addingfalse = !this.addingfalse;
+            setTimeout(() => {
+              this.addingfalse = !this.addingfalse;
+            }, 3000);
+          }
+        })
+        .catch((error) => {
+          this.articleaEditResponse = error.message;
+          console.error("There was an error!", error);
+        });
+
+      this.closeDelete();
+    },
+
+
+    closeDelete() {
+      this.dialogDeleteConfirm = false;
+      this.dialogDelete = false;
+      this.selectedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
+    },
+
 
 },
 
@@ -378,7 +606,7 @@ import { mapGetters } from "vuex"
 .SomeLink{
   height: 200px;
   border: solid 1px #f4f4f4;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 15px;
   background:#ffffff;
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
@@ -396,6 +624,7 @@ import { mapGetters } from "vuex"
   font-weight: bold;
   color: #3d3c3c96;
   margin-bottom: 15px;
+  /* background-color:pink */
 }
 .SomeLink div:nth-child(1) > p{
   font-size: 12px;
@@ -404,10 +633,12 @@ import { mapGetters } from "vuex"
 .SomeLink div:nth-child(2){
   color: #000000;
   font-size: 14px;
+  height: 100px;
   display: flex;
   text-transform: uppercase;
   justify-content: space-between;
   align-items: center;
+  /* background:red */
 }
 .SomeLink div:nth-child(2) img{
   height: 100px;
@@ -422,5 +653,50 @@ import { mapGetters } from "vuex"
   font-size: 10px;
   font-weight: bold;
 }
+
+
+
+
+
+/* Edit Article */
+.editIMGO {
+  margin-bottom: 35px;
+}
+.updateForm {
+  height: 400px;
+  /* width: 110%; */
+  overflow-y: scroll;
+}
+.updateForm::-webkit-scrollbar {
+  width: 20px;
+}
+.updateForm::-webkit-scrollbar-track {
+  background: rgb(255, 255, 255);
+}
+
+.updateForm::-webkit-scrollbar-thumb {
+  background-color: var(--main-green-color);
+  border-radius: 30px;
+  border: 7px solid rgb(255, 255, 255);
+}
+
+.updateForm .col-lg-12,
+.col-md-12 {
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+
+
+/* For delete item */
+.CancelVerification{
+  margin-bottom:20px;
+}
+
+
+.alert{
+    position: absolute;
+    top: 100px;
+    left: 82%;
+  }
 
 </style>

@@ -4,8 +4,8 @@
 
     <v-form ref="form1">
       <v-container>
-        <v-row>
-          <v-col cols="12" md="6" lg="6" class="Art-Title">
+        <v-row justify="center">
+          <v-col cols="12" md="6" lg="6" >
             <v-text-field
               clearable
               clear-icon="mdi-close-circle"
@@ -23,7 +23,7 @@
               rows="1"
               row-height="15"
             ></v-textarea>
-            <v-file-input
+            <!-- <v-file-input
               :rules="rules"
               solo
               accept="image/png, image/jpeg, image/bmp"
@@ -31,9 +31,7 @@
               prepend-icon="mdi-camera"
               label="illustration"
               v-on:change="handleFileUpload()"
-            ></v-file-input>
-          </v-col>
-          <v-col cols="12" md="6" lg="6" class="Art-text">
+            ></v-file-input> -->
             <v-textarea
               clearable
               v-model="new_article.content"
@@ -44,7 +42,7 @@
               rows="10"
               row-height="15"
             ></v-textarea>
-            
+
             <v-btn
               elevation="2"
               large
@@ -65,9 +63,9 @@
         type="success"
         max-width="300"
         class="alert"
-        color="mainGreenColor"
+        color="success"
       >
-        Nouveau type Enregistré avec succes</v-alert
+        Article Enregistré avec succes</v-alert
       >
     </transition>
     <transition name="slide">
@@ -79,7 +77,7 @@
         class="alert"
         color="error"
       >
-        {{ articleaAddingResponse.message }}</v-alert
+        {{ articleaAddingResponse.messages }}</v-alert
       >
     </transition>
   </div>
@@ -108,7 +106,7 @@ import axios from "axios";
       title: "TITLE: Diffusion mondiale de banane",
       content: "TEXT:À la fin du XIXe siècle la culture du bananier devint un enjeu économique important influant même des choix politiques internationaux. À la fin du XIXe siècle la culture du bananier devint un enjeu économique important influant même des choix politiques internationaux.À la fin du XIXe siècle la culture du bananier devint un enjeu économique important influant même des choix politiques internationaux.",
       concerning: "CONCERNING : INPHB, Yamoussoukro, Côte d'Ivoire",
-      illustration: "",
+      // illustration: "",
     },
 
     articleaAddingResponse: "",
@@ -121,22 +119,23 @@ import axios from "axios";
     methods: {
     submit() {
       // this.handleFileUpload()
-      const formData = new FormData
-      formData.append('illustration', this.new_article.illustration)
-      formData.append('title', this.new_article.title)
-      formData.append('content', this.new_article.content)
-      formData.append('concerning', this.new_article.concerning)
+      // const formData = new FormData
+      // formData.append('illustration', this.new_article.illustration)
+      // formData.append('title', this.new_article.title)
+      // formData.append('content', this.new_article.content)
+      // formData.append('concerning', this.new_article.concerning)
 
-        axios({ url: "article/add", data: formData, method: "POST", headers:{'Content-Type': 'multipart/form-data'} })
+        // axios({ url: "article/add", data: formData, method: "POST", headers:{'Content-Type': 'multipart/form-data'} })
+        axios({ url: "article/add", data: this.new_article, method: "POST"})
         .then((response) => {
           this.articleaAddingResponse = response.data;
-          console.log(response.data);
-          if (this.articleaAddingResponse.message == "success") {
+          if (this.articleaAddingResponse.message == "sucess") {
             this.addingSuccess = !this.addingSuccess;
             setTimeout(() => {
               this.addingSuccess = !this.addingSuccess;
               // this.forceRerender1();
             }, 3000);
+            this.$refs.form1.reset();
           } else {
             this.addingfalse = !this.addingfalse;
             setTimeout(() => {
@@ -145,11 +144,11 @@ import axios from "axios";
           }
         })
         .catch((error) => {
-          this.articleaAddingResponse = error.message;
+          this.articleaAddingResponse = this.response.data;
           console.error("There was an error!", error);
         });
 
-      this.$refs.form1.reset();
+      // this.$refs.form1.reset();
     },
 
     // For table re-render after delete or update an item
@@ -157,9 +156,9 @@ import axios from "axios";
     //   this.$store.state.articlecomponentKey += 1;
     // },
 
-    handleFileUpload(){
-        this.new_article.illustration = event.target.files[0];
-      }
+    // handleFileUpload(){
+    //     this.new_article.illustration = event.target.files[0];
+    //   }
   },
 
   }
@@ -192,4 +191,12 @@ import axios from "axios";
   background: #f4f4f4 ;
 }
 
+
+
+
+.alert{
+    position: absolute;
+    top: 100px;
+    left: 82%;
+  }
 </style>
