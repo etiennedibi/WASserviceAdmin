@@ -9,7 +9,7 @@ import VueAxios from "vue-axios";
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios);
-axios.defaults.baseURL = "http://127.0.0.1:3333/";
+axios.defaults.baseURL = "http://154.53.44.167:3333/";
 
 // pour garder l'autorisation dans le header, lorsqu'il y a rechargement de page. parcequ'au recharegment
 // le header est suprimé, mais pas le localeStorage
