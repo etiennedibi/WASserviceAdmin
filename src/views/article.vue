@@ -17,7 +17,7 @@
               clearable
               v-model="new_article.concerning"
               clear-icon="mdi-close-circle"
-              label="Subtitle"
+              label="concerning"
               auto-grow
               solo
               rows="1"
@@ -36,7 +36,7 @@
               clearable
               v-model="new_article.content"
               clear-icon="mdi-close-circle"
-             label="Text"
+             label="Content"
               auto-grow
               solo
               rows="10"
@@ -103,9 +103,9 @@ import axios from "axios";
 
     // FOR FORM SENDING
     new_article: {
-      title: "TITLE: Diffusion mondiale de banane",
-      content: "TEXT:À la fin du XIXe siècle la culture du bananier devint un enjeu économique important influant même des choix politiques internationaux. À la fin du XIXe siècle la culture du bananier devint un enjeu économique important influant même des choix politiques internationaux.À la fin du XIXe siècle la culture du bananier devint un enjeu économique important influant même des choix politiques internationaux.",
-      concerning: "CONCERNING : INPHB, Yamoussoukro, Côte d'Ivoire",
+      title: "",
+      content: "",
+      concerning: "",
       // illustration: "",
     },
 

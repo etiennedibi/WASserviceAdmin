@@ -2,6 +2,21 @@
   <div class="BodY">
     <p class="title">ARTICLE LIST</p>
     
+    <v-row class="TheSeach">
+      <v-col cols="12" sm="3" md="3" lg="3">
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          dense
+          outlined
+          hide-details
+          prepend-inner-icon="mdi-search"
+          label="Rechercher"
+          class="theSeachBar"
+        ></v-text-field>
+      </v-col>
+    </v-row>
+
     <v-container class="stationListboxWrapper">
       <v-data-iterator
         :items="Articles"
@@ -166,7 +181,7 @@
             >
               <div class="SomeLink">
                   <div>
-                    <p>WAC ARTICLE</p>
+                    <p>{{item.concerning}}</p>
                     <p>{{item.created_at}} </p>
                   </div>
                   <div>
@@ -490,6 +505,7 @@ import { mapGetters } from "vuex"
               this.addingSuccess = !this.addingSuccess;
               this.forceRerender();
             }, 3000);
+            this.$store.dispatch("init_article");
           } else {
             this.articleaEditResponse.message =
               "Impossible d'effectuer l'annulation";
